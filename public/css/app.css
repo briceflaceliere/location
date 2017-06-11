@@ -1,0 +1,17 @@
+.main {
+    margin-top: 20px;
+}
+
+input, label {
+    margin-right: 10px;
+}
+
+#map {
+    width: 100%;
+    margin: 0;
+    height: 600px;
+}
+
+.form-inline {
+    margin-bottom: 20px;
+}
