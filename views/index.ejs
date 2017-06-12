@@ -68,7 +68,7 @@
                     </div>
                     <div class="form-inline row">
                         <input type="hidden" id="data" name="data" required />
-                        <button type="submit" class="form-control" id="submit" disabled="disabled">Rechercher</button>
+                        <button type="submit" class="form-control" id="submit" disabled="disabled" data-toggle="modal" data-target="#loader" data-backdrop="static" data-keyboard="false" >Rechercher</button>
                     </div>
                 </form>
                 <% } else { %>
@@ -78,7 +78,20 @@
         </div>
 
     </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="loader" tabindex="-1" role="dialog" aria-labelledby="loader">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <img src="/img/reload.gif" alt="Loader"> Recherche en cours...
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
+
         var results = <%- JSON.stringify(results) %>;
     </script>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>

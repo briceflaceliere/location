@@ -49,7 +49,7 @@ function searchCity(latLng, radius, time, res) {
         return;
     }
 
-    var resuls = [];
+    var results = [];
     for (var i in cityDatabase) {
 
         var distance = geolib.getDistanceSimple(
@@ -58,13 +58,13 @@ function searchCity(latLng, radius, time, res) {
         );
 
         if (distance <= radius) {
-            resuls.push(cityDatabase[i]);
+            results.push(cityDatabase[i]);
         }
     }
 
-    console.log(resuls.length);
+    console.log(results.length);
 
-    async.filter(resuls, function(result, callback) {
+    async.map(results, function(result, callback) {
 
         googleMapsClient.directions({
             origin: latLng,
@@ -75,18 +75,24 @@ function searchCity(latLng, radius, time, res) {
         }, function(err, response) {
             if (!err && response.json.routes[0]) {
                 var roadTime = response.json.routes[0].legs[0].duration.value / 60;
+                var distance = response.json.routes[0].legs[0].distance.value / 1000;
                 console.log(roadTime + 'min');
-                callback(null, roadTime < time + 1);
+                result.roadTime = Math.round(roadTime);
+                result.distance = Math.round(distance * 10)/ 10;
+                result.valid = roadTime < time + 5;
+                callback(null, result);
             } else {
                 console.log(err.json);
-                callback(err, !err);
+                callback(err);
             }
         });
     }, function (err, results) {
-        console.log(resuls.length);
-        fs.writeFileSync(cacheKey, JSON.stringify(results));
-        res.render('index.ejs', {results : results});
+        async.filter(results, function (result, callback) {
+            callback(null, result.valid);
+        }, function (err, results) {
+            console.log(results);
+            fs.writeFileSync(cacheKey, JSON.stringify(results));
+            res.render('index.ejs', {results : results});
+        });
     });
-
-    return resuls;
 }

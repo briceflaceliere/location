@@ -12,10 +12,23 @@ function init() {
         var cityMarkers = [];
         for (var i in results) {
             var latlng = new google.maps.LatLng(results[i].latitude,results[i].longitude);
+            var minRoadTime = results[i].roadTime - 5;
+            if (minRoadTime < 0) {
+                var minRoadTime = 0;
+            }
             var cityMarker = new google.maps.Marker({
                 position: latlng,
                 map: map,
-                title: results[i].nom_commune
+                icon: {
+                    path: google.maps.SymbolPath.CIRCLE,
+                    scale: 10,
+                    strokeWeight: 1,
+                    strokeColor: '#404040', // '#F00'
+                    fillColor: '#404040',
+                    fillOpacity: 0.7
+                },
+                label: false,
+                title: results[i].nom_commune + ' (' + (results[i].roadTime - 5) + '-' + results[i].roadTime + 'min | ' + results[i].roadTime + 'km)'
             });
             cityMarkers.push(cityMarker);
            /* var infowindow = new google.maps.InfoWindow({
