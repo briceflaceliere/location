@@ -1,22 +1,24 @@
 import { Component, OnInit, ElementRef } from '@angular/core';
-declare var google: any;
+import { GoogleMapsService } from './google-map.service';
 
 @Component({
     selector: 'map',
     template: '<div id="map"></div>',
-    styleUrls: ['./map.component.css']
+    styleUrls: ['./map.component.css'],
+    providers: [GoogleMapsService]
 })
 export class MapComponent implements OnInit
 {
-    public name;
+    private map;
 
-    constructor(private  el: ElementRef) {}
+    constructor(private  el: ElementRef, private googleMapService: GoogleMapsService) { }
 
     ngOnInit()
     {
-       var map = new google.maps.Map(this.el.nativeElement.firstChild, {
-            center: {lat: 46.864716, lng:  2.349014},
+        this.map = this.googleMapService.bindMap(this.el.nativeElement.firstChild, {
+            center: {lat: 46.864716, lng: 2.349014},
             zoom: 6
-       });
+        });
     }
+
 }
