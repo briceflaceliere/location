@@ -8,6 +8,8 @@ const url = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBYnpxWkyjCS0cfkGg
 export class GoogleMapsService {
     private promise;
 
+    private map;
+
     public load() {
         // First time 'load' is called?
         if (!this.promise) {
@@ -31,11 +33,9 @@ export class GoogleMapsService {
         return this.promise;
     }
 
-    public bindMap(el, options) {
-        return new google.maps.Map(el, options);
-    }
+    public bind(el, options) {
+        this.map = new google.maps.Map(el, options);
 
-    public bindAutocomp(el, options) {
-        return new google.maps.places.Autocomplete(el, options);
+        return this.map;
     }
 }

@@ -1,21 +1,21 @@
-import { Component, ElementRef } from '@angular/core';
-import { GoogleMapsService } from './google-map.service';
+import { Component, ElementRef, Output, EventEmitter } from '@angular/core';
+import { GoogleAutocompService } from './google-autocomp.service';
 
 @Component({
   selector: 'autocomp',
   templateUrl: './autocomp.component.html',
-  providers: [GoogleMapsService]
 })
 export class AutocompComponent {
 
-  private autocomp;
-
-  constructor(private el: ElementRef, private googleMapService: GoogleMapsService) { }
+  protected autocomp;
+  
+  constructor(private el: ElementRef, private googleAutocompService: GoogleAutocompService) { }
 
   ngOnInit()
   {
-    var options = { componentRestrictions : {country: 'fr'}};
-    this.autocomp = this.googleMapService.bindAutocomp(this.el.nativeElement.firstChild, {
+    let that = this;
+
+    that.autocomp = this.googleAutocompService.bind(that.el.nativeElement.firstChild, {
       componentRestrictions : {country: 'fr'}
     });
   }
