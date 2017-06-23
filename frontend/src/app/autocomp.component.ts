@@ -20,7 +20,6 @@ export class AutocompComponent implements OnInit {
         .then(that.onGoogleMapLoaded.bind(this));
   }
 
-
   protected onGoogleMapLoaded() {
     this.googleAutocompService.bind(this.el.nativeElement.firstChild, {
       componentRestrictions : {country: 'fr'}

@@ -24,6 +24,11 @@ export class GoogleAutocompService {
                     return;
                 }
 
+                if (!place.geometry) {
+                    alert('Place detail not found');
+                    return;
+                }
+
                 that.placeChangeEvent.next(place);
             });
 
