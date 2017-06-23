@@ -8,20 +8,6 @@ import { GoogleAutocompService } from './google-autocomp.service';
   styleUrls: ['./app.component.css'],
   providers: [GoogleMapsService, GoogleAutocompService]
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
   title = 'Find home';
-
-  mapIsLoaded = false;
-
-  constructor(private googleMapService: GoogleMapsService) { }
-
-  ngOnInit()
-  {
-    let mapLoaded = function() {
-      this.mapIsLoaded = true;
-    }
-
-    this.googleMapService.load()
-      .then(mapLoaded.bind(this))
-  }
 }

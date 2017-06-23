@@ -8,7 +8,11 @@ const url = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBYnpxWkyjCS0cfkGg
 export class GoogleMapsService {
     private promise;
 
+    private bindPromise;
+
     private map;
+
+    private markers = [];
 
     public load() {
         // First time 'load' is called?
@@ -34,8 +38,45 @@ export class GoogleMapsService {
     }
 
     public bind(el, options) {
-        this.map = new google.maps.Map(el, options);
+        let that = this;
+        this.bindPromise = new Promise( resolve => {
+            that.map = new google.maps.Map(el, options);
+            resolve(that.map);
+        });
 
-        return this.map;
+        return this.bindPromise;
+    }
+
+    public addMarker(position, markerOptions = {})
+    {
+        let that = this;
+        this.bindPromise.then(function () {
+            Object.assign(markerOptions, {map: that.map, position: position})
+            let marker = new google.maps.Marker(markerOptions);
+            that.markers.push(marker);
+
+            //bounds map
+            if (that.markers.length == 1) {
+                that.map.panTo(that.markers[0].getPosition());
+                that.map.setZoom(10);
+            } else {
+                let bounds = new google.maps.LatLngBounds();
+                for (let i in that.markers) {
+                    bounds.extend(that.markers[i].getPosition());
+                }
+                that.map.fitBounds(bounds);
+            }
+        });
+
+        return this;
+    }
+
+    public clear()
+    {
+        for (let i in this.markers) {
+            this.markers[i].setMap(null);
+        }
+        this.markers = [];
+        return this;
     }
 }

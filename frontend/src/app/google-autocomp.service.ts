@@ -8,22 +8,30 @@ export class GoogleAutocompService {
 
     protected autocomplete;
 
+    protected bindPromise;
+
     public placeChangeEvent = new Subject();
 
     public bind(el, options) {
         let that = this;
 
-        this.autocomplete = new google.maps.places.Autocomplete(el, options);
+        this.bindPromise = new Promise( resolve => {
+            that.autocomplete = new google.maps.places.Autocomplete(el, options);
 
-        this.autocomplete.addListener('place_changed', function(){
-            var place = that.autocomplete.getPlace();
-            if (!place) {
-                return;
-            }
+            that.autocomplete.addListener('place_changed', function () {
+                var place = that.autocomplete.getPlace();
+                if (!place) {
+                    return;
+                }
 
-            that.placeChangeEvent.next(place);
+                that.placeChangeEvent.next(place);
+            });
+
+            resolve(that.autocomplete);
         });
 
-        return this.autocomplete;
+        return this.bindPromise;
     }
+    
+    
 }

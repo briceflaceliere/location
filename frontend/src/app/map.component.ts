@@ -9,7 +9,6 @@ import { GoogleAutocompService } from './google-autocomp.service';
 })
 export class MapComponent implements OnInit
 {
-    private map;
 
     constructor(private  el: ElementRef,
                 private googleMapService: GoogleMapsService, 
@@ -17,16 +16,15 @@ export class MapComponent implements OnInit
 
     ngOnInit()
     {
-        this.map = this.googleMapService.bind(this.el.nativeElement.firstChild, {
+        let that = this;
+        this.googleMapService.load()
+            .then(that.onGoogleMapLoaded.bind(this));
+    }
+
+    protected onGoogleMapLoaded() {
+        this.googleMapService.bind(this.el.nativeElement.firstChild, {
             center: {lat: 46.864716, lng: 2.349014},
             zoom: 6
         });
-
-        this.googleAutocompService.placeChangeEvent.subscribe(this.onAutocompPlaceChange);
-    }
-
-    protected onAutocompPlaceChange(place)
-    {
-        console.log('yrdt');
     }
 }
