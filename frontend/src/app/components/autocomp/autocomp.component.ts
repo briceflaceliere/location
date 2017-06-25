@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, Output, EventEmitter } from '@angular/core';
-import { GoogleAutocompService } from './google-autocomp.service';
-import { GoogleMapsService } from './google-map.service';
+import { GoogleAutocompService } from '../../services/google-autocomp.service';
+import { GoogleMapsService } from '../../services/google-map.service';
 
 declare var google: any;
 
@@ -21,7 +21,7 @@ export class AutocompComponent implements OnInit {
   }
 
   protected onGoogleMapLoaded() {
-    this.googleAutocompService.bind(this.el.nativeElement.firstChild, {
+    this.googleAutocompService.bind(this.el.nativeElement.lastChild, {
       componentRestrictions : {country: 'fr'}
     });
 

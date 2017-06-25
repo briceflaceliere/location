@@ -2,10 +2,10 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule }   from '@angular/forms';
 
-import { AppComponent } from './app.component';
-import { MapComponent } from './map.component';
-import { SearchComponent } from './search.component';
-import { AutocompComponent } from './autocomp.component';
+import { AppComponent } from './components/app/app.component';
+import { MapComponent } from './components/map/map.component';
+import { SearchComponent } from './components/search/search.component';
+import { AutocompComponent } from './components/autocomp/autocomp.component';
 
 @NgModule({
   declarations: [

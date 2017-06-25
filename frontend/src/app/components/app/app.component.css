@@ -1,0 +1,18 @@
+h1 {
+    color: #369;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 250%;
+}
+
+map {
+    width: 65%;
+    display: block;
+    height: 100%;
+    float:left;
+}
+
+search {
+    width: 35%;
+    display: block;
+    float: left;
+}

@@ -1,10 +1,10 @@
 import { Component, OnInit, ElementRef} from '@angular/core';
-import { GoogleMapsService } from './google-map.service';
-import { GoogleAutocompService } from './google-autocomp.service';
+import { GoogleMapsService } from '../../services/google-map.service';
+import { GoogleAutocompService } from '../../services/google-autocomp.service';
 
 @Component({
     selector: 'map',
-    template: '<div id="map"></div>',
+    template: '<div class="map z-depth-2"></div>',
     styleUrls: ['./map.component.css'],
 })
 export class MapComponent implements OnInit
