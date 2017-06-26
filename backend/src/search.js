@@ -8,10 +8,12 @@ var googleMapsClient = require('@google/maps').createClient({
     key: 'AIzaSyBdUsv0R31zgmKVgZZwd9gNllln2TGbIG4'
 });
 
-module.exports.search = function (socket, search, callback) {
+module.exports.search = function (socket, search) {
     console.log('** Search **', search);
     var progress = progressBuilder.init(providers);
-    socket.emit('search-progress', progress.getProgress());
+    progress.onProgressEvent.subscribe(function (progress) {
+        socket.emit('search-progress', progress);
+    });
 
     var radius = (2.166666667 * search.time) * 1000;
     getNearCities(search.lat, search.lng, radius, function (cities) {
@@ -22,7 +24,7 @@ module.exports.search = function (socket, search, callback) {
         async.each(cities, function (city, callback) {
             getDirection({lat: search.lat, lng: search.lng}, city, function(city) {
                 console.log('Direction request: ', city);
-                socket.emit('search-progress', progress.next('city'));
+                progress.next('city');
                 if (city.roadTime && city.roadTime < search.time + 5) {
                     filteredCities.push(city);
                     socket.emit('city', city);
@@ -30,12 +32,26 @@ module.exports.search = function (socket, search, callback) {
                 callback();
             });
         }, function () {
-            progress.city = true;
-            socket.emit('search-progress', progress.done('city'));
+            progress.done('city');
+            searchAds(search, filteredCities, progress, function (results) {
+                console.log(results);
+            });
         });
     });
 };
 
+
+function searchAds(search, cities, progress, mainCallback) {
+    var results = {};
+    async.each(providers, function (provider, callback) {
+        provider.search(search, cities, progress, function (ads) {
+            results[provider.name] = ads;
+            callback();
+        });
+    }, function () {
+        mainCallback(results);
+    });
+}
 
 function getNearCities(lat, lng, radius, callback) {
     var collection = db.collection('cities');

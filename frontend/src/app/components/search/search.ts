@@ -6,4 +6,6 @@ export class Search {
     house = true;
     price: number;
     room = 1;
+    maxDate = 1;
+    type = 0;
 }

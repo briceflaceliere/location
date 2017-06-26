@@ -1,0 +1,13 @@
+
+
+.waitSearch .substep {
+    color: #7f7f7f;
+}
+
+.waitSearch .substep > span {
+    margin-left: 10px;
+}
+
+.waitSearch .substep .check {
+    color: #26a69a;
+}

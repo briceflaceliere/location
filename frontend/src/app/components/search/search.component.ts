@@ -22,6 +22,20 @@ export class SearchComponent implements OnInit {
   public progress = new Progress();
 
   public search = new Search();
+  
+  public maxDates = [
+    {value: 1, label: 'Hier'}, 
+    {value: 2, label: 'Avant-hier'}, 
+    {value: 7, label: 'Moins 1 semaine'},
+    {value: 15, label: 'Moins 2 semaines'},
+    {value: 31, label: 'Moins 1 mois'},
+  ];
+
+  public types = [
+    {value: 0, label: 'Indiférent'},
+    {value: 1, label: 'Meublé'},
+    {value: 2, label: 'Non meublé'},
+  ];
 
   constructor(private changeDetector: ChangeDetectorRef,
               private googleAutocompService: GoogleAutocompService,

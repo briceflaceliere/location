@@ -1,3 +1,5 @@
+var Subject = require('rxjs/Subject').Subject;
+
 
 module.exports.init = function(providers) {
     var progress = {progress: 0, city: 0, providers: []};
@@ -10,9 +12,10 @@ module.exports.init = function(providers) {
     }
 
     return {
+        onProgressEvent: new Subject(),
         progress: progress,
         steps: steps,
-        getProgress: function() {
+        emitProgress: function() {
             console.log(this.progress);
             var providerProgress = 100 / (this.progress.providers.length + 1);
             var cityProgress = 100 - (providerProgress * this.progress.providers.length);
@@ -22,7 +25,8 @@ module.exports.init = function(providers) {
                 this.progress.progress += ((providerProgress / 100) * this.progress.providers[i].progress)
             }
 
-            return this.progress;
+            this.onProgressEvent.next(this.progress);
+            return this;
         },
         setMax: function (name, max) {
             this.steps[name] = 100 / max;
@@ -40,7 +44,8 @@ module.exports.init = function(providers) {
                     }
                 }
             }
-            return this.getProgress();
+            this.emitProgress();
+            return this;
         },
         done: function(name) {
             if (name == 'city') {
@@ -48,7 +53,8 @@ module.exports.init = function(providers) {
             } else {
                 this.progress.progress[i].progress = 100;
             }
-            return this.getProgress();
+            this.emitProgress();
+            return this;
         }
     };
 };

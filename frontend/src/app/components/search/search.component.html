@@ -25,6 +25,18 @@
                 <input type="number" class="validate" min="1" step="1" id="room" name="room" value="1" [(ngModel)]="search.room">
               </div>
               <div class="col s6">
+                <label>Type</label>
+                <select class="browser-default" name="type" [(ngModel)]="search.type" >
+                  <option *ngFor="let type of types" [value]="type.value">{{ type.label }}</option>
+                </select>
+              </div>
+              <div class="col s6">
+                <label>Date de parution</label>
+                <select class="browser-default" name="maxDate" [(ngModel)]="search.maxDate" >
+                  <option *ngFor="let maxDate of maxDates" [value]="maxDate.value">{{ maxDate.label }}</option>
+                </select>
+              </div>
+              <div class="col s6">
                 <input type="checkbox" name="house" id="house" value="house" [(ngModel)]="search.house" checked>
                 <label for="house">Maison</label>
               </div>
@@ -32,9 +44,7 @@
                 <input type="checkbox" name="apartment" id="apartment" value="apartment" [(ngModel)]="search.apartment" checked>
                 <label for="apartment">Appartement</label>
               </div>
-            </div>
-            <div class="row">
-              <div class="col s12 center-align">
+              <div class="input-field col s12 center-align">
                 <button type="submit" class="waves-effect waves-light btn" [disabled]="!searchForm.valid || !search.lat || !search.lng">
                   Rechercher
                   <i class="material-icons right">search</i>
@@ -42,21 +52,25 @@
               </div>
             </div>
           </form>
-          <div class="row" *ngIf="waitSearch">
+          <div class="row waitSearch" *ngIf="waitSearch">
             <ul class="col s12">
               <li>
-                <p>Recherche en cours...</p>
+                <p>Recherche en cours... <small>{{ progress.progress | number:'1.0-1' }}%</small></p>
                 <div class="progress">
                   <div [ngClass]="{indeterminate: progress.progress == 0, determinate: progress.progress > 0}" [ngStyle]="{'width': progress.progress + '%'}"></div>
                 </div>
               </li>
-              <li>
-                <input type="checkbox" id="city" [checked]="progress.city >= 100" />
-                <label for="city">Recherche des villes</label>
+              <li class="valign-wrapper substep">
+                <i *ngIf="progress.city == 0" class="material-icons">check_box_outline_blank</i>
+                <i *ngIf="progress.city > 0 && progress.city < 100" class="material-icons">autorenew</i>
+                <i *ngIf="progress.city >= 100" class="material-icons check">check</i>
+                <span>Recherche des villes <small>{{ progress.city | number:'1.0-0' }}%</small></span>
               </li>
-              <li *ngFor="let provider of progress.providers; index as i;">
-                <input type="checkbox" [id]="'provider' + i" [checked]="provider.progress >= 100" />
-                <label [for]="'provider' + i">Recherche sur {{provider.name}}</label>
+              <li class="valign-wrapper substep" *ngFor="let provider of progress.providers; index as i;">
+                <i *ngIf="provider.progress == 0" class="material-icons">check_box_outline_blank</i>
+                <i *ngIf="provider.progress > 0 && provider.progress < 100" class="material-icons">autorenew</i>
+                <i *ngIf="provider.progress >= 100" class="material-icons check">check</i>
+                <span>Recherche sur {{provider.name}} <small>{{ provider.progress | number:'1.0-0' }}%</small></span>
               </li>
             </ul>
           </div>
