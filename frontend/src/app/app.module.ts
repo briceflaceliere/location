@@ -6,6 +6,7 @@ import { AppComponent } from './components/app/app.component';
 import { MapComponent } from './components/map/map.component';
 import { SearchComponent } from './components/search/search.component';
 import { AutocompComponent } from './components/autocomp/autocomp.component';
+import { ResultsComponent } from "./components/results/results.component";
 
 @NgModule({
   declarations: [
@@ -13,6 +14,7 @@ import { AutocompComponent } from './components/autocomp/autocomp.component';
     MapComponent,
     SearchComponent,
     AutocompComponent,
+    ResultsComponent
   ],
   imports: [
     BrowserModule,

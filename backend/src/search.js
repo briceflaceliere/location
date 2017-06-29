@@ -3,6 +3,7 @@ var assert = require('assert');
 var async = require('async');
 var progressBuilder = require('./progress.js');
 var providers = require('./providers.js').getProviders();
+var moment = require('moment');
 
 var googleMapsClient = require('@google/maps').createClient({
     key: 'AIzaSyBdUsv0R31zgmKVgZZwd9gNllln2TGbIG4'
@@ -15,6 +16,8 @@ module.exports.search = function (socket, search) {
         socket.emit('search-progress', progress);
     });
 
+    search.maxDate = moment().subtract(search.maxDate, 'days');
+
     var radius = (2.166666667 * search.time) * 1000;
     getNearCities(search.lat, search.lng, radius, function (cities) {
 
@@ -26,6 +29,7 @@ module.exports.search = function (socket, search) {
                 console.log('Direction request: ', city);
                 progress.next('city');
                 if (city.roadTime && city.roadTime < search.time + 5) {
+                    city.results = [];
                     filteredCities.push(city);
                     socket.emit('city', city);
                 }
@@ -33,8 +37,8 @@ module.exports.search = function (socket, search) {
             });
         }, function () {
             progress.done('city');
-            searchAds(search, filteredCities, progress, function (results) {
-                console.log(results);
+            searchAds(search, filteredCities, progress, function (err, results) {
+                socket.emit('results', results);
             });
         });
     });
@@ -42,14 +46,15 @@ module.exports.search = function (socket, search) {
 
 
 function searchAds(search, cities, progress, mainCallback) {
-    var results = {};
+    var results = [];
     async.each(providers, function (provider, callback) {
-        provider.search(search, cities, progress, function (ads) {
-            results[provider.name] = ads;
+        provider.search(search, cities, progress, function (err, ads) {
+            results = results.concat(ads);
+            progress.done(provider.name);
             callback();
         });
     }, function () {
-        mainCallback(results);
+        mainCallback(null, results);
     });
 }
 

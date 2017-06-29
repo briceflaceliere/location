@@ -1,0 +1,33 @@
+<div class="results">
+    <p *ngIf="results !== null && results.length == 0" class="center-align">Aucun resultat</p>
+    <div class="col s12" *ngIf="filteredCity != null">
+        <div class="chip">
+            {{ filteredCity.name }}
+            <i class="close material-icons" (click)="onDeleteFilter()">close</i>
+        </div>
+    </div>
+    <div class="col s12" *ngFor="let result of results" [hidden]="filteredCity != null && filteredCity.id != result.cityId">
+        <div class="card horizontal" (mouseover)="onOver(result)" (mouseleave)="onLeave(result)">
+            <div class="card-content">
+                <a href="{{ result.link }}"><span class="card-title">{{ result.title }}</span></a>
+                <div class="price chip teal lighten-2">{{ result.price }}€ C.C.</div>
+                <div class="location chip" [ngClass]="{red: result.cityId == null}">{{ result.city }}</div>
+                <div class="roadtime chip">{{ result.roadTime }}min ({{ result.distance }}km)</div>
+                <div class="date chip">{{ result.date }}</div>
+                <div class="provider chip">{{ result.provider }}</div>
+            </div>
+
+            <div class="card-image">
+                <a href="{{ result.link }}">
+                    <img class="waves-effect waves-light" [src]="result.images.length > 0 ? result.images[0] : 'https://dummyimage.com/187x140/fff/000.png'">
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="fixed-action-btn" *ngIf="scroll > 50">
+    <a class="btn-floating btn-large" (click)="topOfPage();">
+        <i class="large material-icons">keyboard_arrow_up</i>
+    </a>
+</div>

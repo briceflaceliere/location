@@ -1,0 +1,26 @@
+.card {
+    height: 140px;
+}
+
+.card-image img {
+    height: 140px;
+    width:auto
+}
+
+.card .card-title {
+    font-size: 18px;
+}
+
+.card:hover {
+    background-color: rgb(230, 227, 227);
+}
+
+.card.horizontal .card-image {
+    position: relative;
+    float: right;
+}
+
+
+.card .card-content {
+    width:100%;
+}

@@ -16,7 +16,7 @@ module.exports.init = function(providers) {
         progress: progress,
         steps: steps,
         emitProgress: function() {
-            console.log(this.progress);
+            console.log(this.progress.progress + '%');
             var providerProgress = 100 / (this.progress.providers.length + 1);
             var cityProgress = 100 - (providerProgress * this.progress.providers.length);
 
@@ -40,7 +40,7 @@ module.exports.init = function(providers) {
             } else {
                 for (var i in this.progress.providers) {
                     if (this.progress.providers[i].name == name) {
-                        this.progress.progress[i].progress += step;
+                        this.progress.providers[i].progress += step;
                     }
                 }
             }
@@ -51,7 +51,7 @@ module.exports.init = function(providers) {
             if (name == 'city') {
                 this.progress.city = 100;
             } else {
-                this.progress.progress[i].progress = 100;
+                this.progress.providers[i].progress = 100;
             }
             this.emitProgress();
             return this;

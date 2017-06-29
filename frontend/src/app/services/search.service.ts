@@ -12,15 +12,14 @@ export class SearchService {
 
     public addCityEvent = new Subject();
 
+    public resultsEvent = new Subject();
+
     public connect(url)
     {
-        console.log('socket');
-        this.socket = io(url);
-    }
-
-    public search(data)
-    {
         let that = this;
+        console.log('socket connect');
+
+        this.socket = io(url);
 
         this.socket.on('search-progress', function(progress){
             progress.progress = Math.floor(progress.progress);
@@ -31,6 +30,13 @@ export class SearchService {
             that.addCityEvent.next(city)
         });
 
+        this.socket.on('results', function(results){
+            that.resultsEvent.next(results);
+        });
+    }
+
+    public search(data)
+    {
         this.socket.emit('search', data);
     }
 }

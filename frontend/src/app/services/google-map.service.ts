@@ -47,7 +47,7 @@ export class GoogleMapsService {
         return this.bindPromise;
     }
 
-    public addMarker(position, markerOptions = {})
+    public addMarker(position, markerOptions = {}, callback = null)
     {
         let that = this;
         this.bindPromise.then(function () {
@@ -66,6 +66,10 @@ export class GoogleMapsService {
                 }
                 that.map.fitBounds(bounds);
             }
+            
+            if (callback != null) {
+                callback(marker);
+            }
         });
 
         return this;
@@ -76,6 +80,7 @@ export class GoogleMapsService {
         for (let i in this.markers) {
             this.markers[i].setMap(null);
         }
+
         this.markers = [];
         return this;
     }

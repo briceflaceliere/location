@@ -2,12 +2,12 @@
   <div class="col s12">
     <ul class="collapsible search-pannel" data-collapsible="accordion">
       <li>
-        <div class="collapsible-header" [ngClass]="{active: open}">
+        <div class="collapsible-header active">
           <i class="material-icons">search</i>
           Recherche
         </div>
         <div class="collapsible-body">
-          <form #searchForm="ngForm" (ngSubmit)="onSubmit()" *ngIf="!waitSearch">
+          <form #searchForm="ngForm" (ngSubmit)="onSubmit()" [hidden]="waitSearch">
             <div class="row">
               <div class="input-field col s6">
                 <label for="time">A</label>
@@ -77,5 +77,8 @@
         </div>
       </li>
     </ul>
+  </div>
+  <div class="col s12">
+    <results></results>
   </div>
 </div>

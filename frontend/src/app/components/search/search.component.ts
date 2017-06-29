@@ -4,6 +4,7 @@ import { GoogleAutocompService } from '../../services/google-autocomp.service';
 import { SearchService } from "../../services/search.service";
 import {Progress} from "./progress";
 import {GoogleMapsService} from "../../services/google-map.service";
+import {CitiesService} from "../../services/cities.service";
 
 declare var $: any;
 declare var google: any;
@@ -40,7 +41,8 @@ export class SearchComponent implements OnInit {
   constructor(private changeDetector: ChangeDetectorRef,
               private googleAutocompService: GoogleAutocompService,
               private googleMapService: GoogleMapsService,
-              private searchService: SearchService) { }
+              private searchService: SearchService,
+              private citiesService: CitiesService) { }
 
   ngOnInit()
   {
@@ -57,27 +59,38 @@ export class SearchComponent implements OnInit {
     this.searchService.searchProgressEvent.subscribe(function(progress: Progress) {
       that.progress = progress;
     });
-
+    
     this.searchService.addCityEvent.subscribe(function(city: any) {
       that.googleMapService.addMarker(city.location, {
         icon: {
           path: google.maps.SymbolPath.CIRCLE,
-          scale: 10,
+          scale: 15,
           strokeWeight: 1,
           strokeColor: '#404040', // '#F00'
           fillColor: '#404040',
           fillOpacity: 0.7
         },
         title: city.name + ' (' + (city.roadTime - 5) + '-' + city.roadTime + 'min | ' + city.roadTime + 'km)'
+      }, function (marker) {
+        city.marker = marker;
+        that.citiesService.add(city);
       });
+    });
+
+    this.searchService.resultsEvent.subscribe(function(results: any) {
+      that.progress = new Progress();
+      that.waitSearch = false;
+      if (results.length > 0) {
+        $('.search-pannel').collapsible('close', 0);
+      }
     });
   }
 
   public onSubmit()
   {
     this.googleMapService.clear();
+    this.citiesService.clear();
     this.waitSearch = true;
-
     this.searchService.search(this.search);
   }
 

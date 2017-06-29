@@ -13,8 +13,10 @@
     "async": "^2.4.1",
     "body-parser": "^1.17.2",
     "command-line-args": "^4.0.6",
+    "crawler": "^1.0.5",
     "express": "^4.15.3",
     "geolib": "^2.0.22",
+    "moment": "^2.18.1",
     "mongodb": "^2.2.29",
     "rxjs": "^5.4.1",
     "socket.io": "^2.0.3"
