@@ -1,10 +1,11 @@
-import { Component, Output, EventEmitter, OnInit, Input, ChangeDetectorRef} from '@angular/core';
+import { Component, Output, EventEmitter, OnInit, Input, ChangeDetectorRef, ViewChild} from '@angular/core';
 import { Search } from './search';
 import { GoogleAutocompService } from '../../services/google-autocomp.service';
 import { SearchService } from "../../services/search.service";
-import {Progress} from "./progress";
-import {GoogleMapsService} from "../../services/google-map.service";
-import {CitiesService} from "../../services/cities.service";
+import { Progress } from "./progress";
+import { GoogleMapsService } from "../../services/google-map.service";
+import { CitiesService } from "../../services/cities.service";
+import { ResultsComponent } from "../results/results.component";
 
 declare var $: any;
 declare var google: any;
@@ -15,6 +16,9 @@ declare var google: any;
   styleUrls: ['./search.component.css'],
 })
 export class SearchComponent implements OnInit {
+
+  @ViewChild(ResultsComponent)
+  private resultsComponent: ResultsComponent;
 
   public open = true;
 
@@ -88,6 +92,7 @@ export class SearchComponent implements OnInit {
 
   public onSubmit()
   {
+    this.resultsComponent.results = [];
     this.googleMapService.clear();
     this.citiesService.clear();
     this.waitSearch = true;

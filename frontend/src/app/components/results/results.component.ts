@@ -16,6 +16,8 @@ export class ResultsComponent implements OnInit {
   public results = null;
 
   public scroll = 0;
+  
+  public _orderBy = 'roadTime';
 
   public filteredCity = null;
 
@@ -34,7 +36,7 @@ export class ResultsComponent implements OnInit {
 
     this.searchService.resultsEvent.subscribe(function(results: any){
       that.results = results;
-
+      that.sortResult();
       var citiesCount = {};
       for (var i in that.results) {
         var result = that.results[i];
@@ -124,5 +126,38 @@ export class ResultsComponent implements OnInit {
       fillColor: hover ? '#DF0101' : '#009900',
       fillOpacity: 0.7
     };
+  }
+
+  private _fullName: string;
+
+  get orderBy(): string {
+    return this._orderBy;
+  }
+
+  set orderBy(orderBy: string) {
+    this._orderBy = orderBy;
+    this.sortResult();
+  }
+
+  protected sortResult() {
+    var orderBy = this._orderBy;
+    this.results.sort(function (a, b) {
+      a = a[orderBy];
+      b = b[orderBy];
+      if (a == null) {
+        a = 999999;
+      }
+      if (b == null) {
+        b = 999999;
+      }
+
+      if (a > b) {
+        return (orderBy == 'date') ? -1 : 1;
+      } else if (a < b) {
+        return (orderBy == 'date') ? 1 : -1;
+      } else {
+        return 0;
+      }
+    });
   }
 }

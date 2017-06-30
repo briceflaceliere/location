@@ -30,6 +30,11 @@ module.exports.init = function(providers) {
         },
         setMax: function (name, max) {
             this.steps[name] = 100 / max;
+            if (name == 'city') {
+                this.progress.city = 0;
+            } else {
+                this.progress.providers[i].progress = 0;
+            }
             return this;
         },
         next: function(name) {

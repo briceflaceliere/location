@@ -50,7 +50,6 @@ function searchAds(search, cities, progress, mainCallback) {
     async.each(providers, function (provider, callback) {
         provider.search(search, cities, progress, function (err, ads) {
             results = results.concat(ads);
-            progress.done(provider.name);
             callback();
         });
     }, function () {

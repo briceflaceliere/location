@@ -2,9 +2,9 @@ var async = require('async');
 var Crawler = require("crawler");
 var moment = require('moment');
 
-var baseUrl = 'https://www.leboncoin.fr/locations/offres/ile_de_france/occasions/?th=1';
+var baseUrl = 'http://www.seloger.com/list.htm?idtt=1&naturebien=1&tri=d_dt_crea';
 
-module.exports.name = providerName = 'leboncoin.fr';
+module.exports.name = providerName = 'seloger.com';
 
 module.exports.search = function (search, cities, progress, mainCallback) {
     var zipcodes = getZipcodes(cities);
@@ -22,47 +22,71 @@ function getAds(search, zipcodes, progress, mainCallback) {
             if (!err) {
                 results = results.concat(dispatchResult(cities, ads));
             }
-            progress.next('leboncoin.fr');
+            progress.next('seloger.com');
             callback(err);
         })
     }, function (err) {
         if (err) {
             console.error(err);
         }
-        progress.done('leboncoin.fr');
+
+        progress.done('seloger.com');
         mainCallback(err, results);
     });
 }
 
 function crawl(search, zipcode, callback) {
     var ads = [];
-
     var page = 1;
     var url = baseUrl;
-    url += '&o=' + page;
-    url += '&location=' + zipcode;
-    url += '&ros=' + search.room;
+    url += '&cp=' + zipcode;
+
+    var room = [];
+    if (search.room > 5) {
+        room.push('5 et +');
+    } else {
+        for (var i = search.room; i <= 5; i++) {
+            if (i == 5) {
+                room.push('5 et +');
+            } else {
+                room.push(i);
+            }
+        }
+    }
+    url += '&nb_piece=' +  room.join(',');
 
     if (search.price) {
-        url += '&mre=' + Math.round(search.price);
+        url += '&pxmax=' + Math.round(search.price);
     }
 
     if (search.type == 1) {
-        url += '&furn=1';
+        url += '&si_meuble=1';
     } else if (search.type == 2) {
-        url += '&furn=2';
+        url += '&si_meuble=0';
     }
 
+    var type = [];
     if (search.house) {
-        url += '&ret=1';
+        type.push(2);
     }
 
     if (search.apartment) {
-        url += '&ret=2';
+        type.push(1);
     }
 
+    if (type.length == 0) {
+        type = [1, 2];
+    }
+
+    url += '&idtypebien=' + type.join(',');
+
+    console.log('First crawl: ' + url);
+
     var c = new Crawler({
-        maxConnections : 2,
+        headers: {
+            'Cookie': '__uzma=toto;__uzmd=toto;__uzmb=toto;__uzmc=toto'
+        },
+        maxConnections : 1,
         callback : function (error, res, done) {
             console.log('Crawl: ' + res.request.uri.href);
             if(error){
@@ -70,21 +94,11 @@ function crawl(search, zipcode, callback) {
             }else{
                 var results = findAds(res.$);
                 if (results.length > 0) {
-                    var last = results[results.length - 1];
-                    var nextPage = moment(last.date).isSameOrAfter(search.maxDate, 'day');
-
-                    results = results.filter(function (ad) {
-                        return moment(ad.date).isSameOrAfter(search.maxDate, 'day');
-                    });
-
                     ads = ads.concat(results);
 
-                    if (nextPage) {
-                        var nextEl = res.$('a#next');
-                        if (nextEl && nextEl.attr('href')) {
-                            var url = 'https:' + nextEl.attr('href');
-                            c.queue(url);
-                        }
+                    var nextEl = res.$('.pagination_next.active');
+                    if (nextEl && nextEl.attr('href')) {
+                        c.queue(nextEl.attr('href'));
                     }
                 }
             }
@@ -101,23 +115,22 @@ function crawl(search, zipcode, callback) {
 
 function findAds($) {
     var ads = [];
-    $('#listingAds .mainList .tabsContent li[itemtype="http://schema.org/Offer"]').each(function (index) {
+    $('.main-wrap .content_result .liste_resultat article').each(function (index) {
         var el = $(this);
-        var ad = {title: null, id: null, link: null, city: null, price: null, date: null, roadTime: null, ditance: null, images: [], provider: 'leboncoin.fr'};
-        var linkEl = el.children();
-        var infoEl = el.find('.item_infos');
-        ad.title = linkEl.attr('title');
-        ad.link = 'https:' + linkEl.attr('href');
-        ad.id = parseInt(el.find('.saveAd').attr('data-savead-id'));
-        ad.city = infoEl.find('[itemprop=address]').first().attr('content');
-        ad.price = parseInt(infoEl.find('[itemprop=price]').attr('content'));
-        ad.date = infoEl.find('[itemprop=availabilityStarts]').attr('content');
-
-        var imgSrc = el.find('.item_imagePic .lazyload').first().attr('data-imgsrc');
-        if (imgSrc) {
-            ad.images.push('https:' + imgSrc);
+        var ad = {title: null, id: null, link: null, city: null, price: null, date: null, roadTime: null, distance: null, images: [], provider: 'seloger.com'};
+        ad.id = parseInt(el.attr('data-publication-id'));
+        ad.link = el.find('.title a').attr('href');
+        ad.city = el.find('.locality').text().trim();
+        ad.title = el.find('.title a').text().trim();
+        el.find('.property_list li').each(function () {
+            ad.title += ' - ' + $(this).text().trim();
+        });
+        ad.price = parseInt(el.find('.price').text().trim().replace('[^0-9]', ''));
+        if (el.find('.listing_photo_container img').length > 0) {
+            ad.images.push(el.find('.listing_photo_container img').attr('src'));
         }
 
+        console.log(ad);
         ads.push(ad);
     });
     return ads;
