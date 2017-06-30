@@ -2,6 +2,9 @@
     <p *ngIf="results !== null && results.length == 0" class="center-align">Aucun resultat</p>
     <div *ngIf="results !== null && results.length > 0">
         <div class="col s8">
+            <div class="chip">
+                Annonces : {{ results.length }}
+            </div>
             <div class="chip"  *ngIf="filteredCity != null">
                 {{ filteredCity.name }}
                 <i class="close material-icons" (click)="onDeleteFilter()">close</i>

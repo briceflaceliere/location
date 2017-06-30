@@ -9,6 +9,7 @@ const options = commandLineArgs(optionDefinitions);
 //Add providers
 providers.addProvider(require('./src/providers/boncoin.js'));
 providers.addProvider(require('./src/providers/seloger.js'));
+providers.addProvider(require('./src/providers/logicimmo.js'));
 
 db.connect('mongodb://localhost:27017/findhome', function () {
     if (options.install) {
