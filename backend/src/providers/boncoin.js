@@ -9,7 +9,7 @@ module.exports.name = providerName = 'leboncoin.fr';
 module.exports.search = function (search, cities, progress, mainCallback) {
     var zipcodes = getZipcodes(cities);
     var length = Object.keys(zipcodes).length;
-    progress.setMax(providerName, length);
+    progress.setMax('leboncoin.fr', length);
 
     getAds(search, zipcodes, progress, mainCallback);
 };
@@ -103,7 +103,7 @@ function findAds($) {
     var ads = [];
     $('#listingAds .mainList .tabsContent li[itemtype="http://schema.org/Offer"]').each(function (index) {
         var el = $(this);
-        var ad = {title: null, id: null, link: null, city: null, price: null, date: null, roadTime: null, ditance: null, images: [], provider: 'leboncoin.fr'};
+        var ad = {title: null, id: null, link: null, city: null, price: null, date: null, accuracy: 'low', roadTime: null, ditance: null, images: [], provider: 'leboncoin.fr'};
         var linkEl = el.children();
         var infoEl = el.find('.item_infos');
         ad.title = linkEl.attr('title');
@@ -162,10 +162,15 @@ function dispatchResult(zipcode, ads) {
         var adKey = getMatchKey(ad.city);
         var index = cityKey.indexOf(adKey);
         if (index != -1) {
-            ads[i].cityId = zipcode[index]._id;
-            ads[i].roadTime = zipcode[index].roadTime;
-            ads[i].distance = zipcode[index].distance;
+            ads[i].accuracy = 'high';
+        } else {
+            ads[i].accuracy = 'low';
+            index = 0;
         }
+
+        ads[i].cityId = zipcode[index]._id;
+        ads[i].roadTime = zipcode[index].roadTime;
+        ads[i].distance = zipcode[index].distance;
     }
 
     return ads;

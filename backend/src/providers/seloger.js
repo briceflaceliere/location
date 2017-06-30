@@ -9,7 +9,7 @@ module.exports.name = providerName = 'seloger.com';
 module.exports.search = function (search, cities, progress, mainCallback) {
     var zipcodes = getZipcodes(cities);
     var length = Object.keys(zipcodes).length;
-    progress.setMax(providerName, length);
+    progress.setMax('seloger.com', length);
 
     getAds(search, zipcodes, progress, mainCallback);
 };
@@ -117,7 +117,7 @@ function findAds($) {
     var ads = [];
     $('.main-wrap .content_result .liste_resultat article').each(function (index) {
         var el = $(this);
-        var ad = {title: null, id: null, link: null, city: null, price: null, date: null, roadTime: null, distance: null, images: [], provider: 'seloger.com'};
+        var ad = {title: null, id: null, link: null, city: null, price: null, date: null, accuracy: 'low', roadTime: null, distance: null, images: [], provider: 'seloger.com'};
         ad.id = parseInt(el.attr('data-publication-id'));
         ad.link = el.find('.title a').attr('href');
         ad.city = el.find('.locality').text().trim();
@@ -175,10 +175,15 @@ function dispatchResult(zipcode, ads) {
         var adKey = getMatchKey(ad.city);
         var index = cityKey.indexOf(adKey);
         if (index != -1) {
-            ads[i].cityId = zipcode[index]._id;
-            ads[i].roadTime = zipcode[index].roadTime;
-            ads[i].distance = zipcode[index].distance;
+            ads[i].accuracy = 'high';
+        } else {
+            ads[i].accuracy = 'low';
+            index = 0;
         }
+        
+        ads[i].cityId = zipcode[index]._id;
+        ads[i].roadTime = zipcode[index].roadTime;
+        ads[i].distance = zipcode[index].distance;
     }
 
     return ads;

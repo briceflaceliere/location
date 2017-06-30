@@ -20,7 +20,7 @@
                 <div class="card-content">
                     <a href="{{ result.link }}" target="_blank"><span class="card-title">{{ result.title }}</span></a>
                     <div class="price chip teal lighten-2">{{ result.price }}€</div>
-                    <div class="location chip" [ngClass]="{red: result.cityId == null}">{{ result.city }}</div>
+                    <div class="location chip" [ngClass]="{red: result.accuracy == 'low'}">{{ result.city }}</div>
                     <div class="roadtime chip" *ngIf="result.roadTime != null">{{ result.roadTime }}min ({{ result.distance }}km)</div>
                     <div class="date chip" *ngIf="result.date != null">{{ result.date }}</div>
                     <div class="provider chip">{{ result.provider }}</div>
